@@ -74,6 +74,8 @@ void setup()
 
   GTCCR = 0;                        // clear TSM => all timers start synchronously
   interrupts();
+
+	UCSR0B = 0;                       // brute-force the USART off just in case...
 }
 
 int main() { setup(); while (true) loop(); }      // enforce main() loop w/o serial handler
