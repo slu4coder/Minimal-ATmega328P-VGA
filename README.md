@@ -1,4 +1,4 @@
 # Minimal-ATmega328P-VGA
-Very lightweight implementation of 320x200 VGA on an Arduino Nano in AVR Assembler
+Very lightweight implementation of 320x200(400) VGA on an Arduino Nano mostly written in AVR Assembler inside the Arduino IDE...
 
-...featuring a 256 character set in FLASH memory!
+...featuring a full 256 character set in FLASH memory!
