@@ -49,7 +49,7 @@ void setup()
   // *****************************
   // ***** Timer0: VGA HSYNC *****
   // *****************************
-  TCNT0  = 6;                       // align VSYNC and HSYNC pulses
+  TCNT0  = 4;                       // align VSYNC and HSYNC pulses
   TCCR0A = (1 << WGM01) | (0 << WGM00);   // mode 2: Clear Timer on Compare Match (CTC)
   TCCR0B = (0 << WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00); // x8 prescaler -> 0.5µs
   OCR0A  = 63;                      // compare match register A (TOP) -> 32µs
@@ -68,38 +68,18 @@ void setup()
   // ************************************************
   // ***** Timer2: only used for jitter control *****
   // ************************************************
-  TCNT2  = 0;                       // used for interrupt jitter correction
-  TCCR2A = (0 << COM2A1) | (0 << COM2A0) | (0 << WGM21) | (0 << WGM20); // mode 7: Fast PWM, COM2A0=0: normal port HIGH, COM2A0=1: Toggle OC2A pin 11 on Compare Match
-  TCCR2B = (0 << WGM22) | (0 << CS22) | (0 << CS21) | (1 << CS20) ;     // set x0 prescaler -> 62.5ns;
+  TCNT2  = 0;
+  TCCR2A = (0<<COM2A1) | (0<<COM2A0) | (1<<WGM21) | (1<<WGM20); // mode 7: Fast PWM, COM2A0=0: normal port HIGH, COM2A0=1: Toggle OC2A pin 11 on Compare Match
+  TCCR2B = (1<<WGM22) | (0<<CS22) | (0<<CS21) | (1<<CS20) ;     // set x0 prescaler -> 62.5ns;
+  OCR2A  = 7;                   // compare match register A (TOP) -> 250ns
+  TIMSK2 = 0;                   // no interrupts here
 
   GTCCR = 0;                        // clear TSM => all timers start synchronously
   interrupts();
 
-	UCSR0B = 0;                       // brute-force the USART off just in case...
+  UCSR0B = 0;                       // brute-force the USART off just in case...
 }
 
 int main() { setup(); while (true) loop(); }      // enforce main() loop w/o serial handler
 
 ISR(TIMER1_OVF_vect) { vline = 0; }               // timer1 overflow interrupt resets vline at HSYNC
-
-/*
------------
-MIT License
------------
-Copyright (c) 2021 Carsten Herting
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
